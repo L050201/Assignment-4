@@ -23,3 +23,6 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
     print(f"{operation}Failed: The maximum number of retries") 
     return None
 #Function to send and receive packets with a timeout mechanism
+
+def download_file(socket: socket.socket_address: Tuple[str, int], filename: str) -> bool:
+#The complete process of downloading a single file from the server
