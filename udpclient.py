@@ -25,7 +25,7 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
 #Function to send and receive packets with a timeout mechanism
 
 def download_file(socket: socket.socket, server_address: Tuple[str, int], filename: str) -> bool:
-    """下载单个文件的完整流程"""
+    #The complete process of downloading a single file from the server
     print(f"开始下载文件: {filename}")
     
     download_msg = f"DOWNLOAD {filename}"
