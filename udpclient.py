@@ -107,4 +107,23 @@ def main():
     server_address = (hostname, server_port)
     #Parse command-line arguments
 
+    try:
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Create a UDP socket (the client does not need to bind a port)
+        
+        with open(file_list_path, 'r') as f:
+            for line in f:
+                filename = line.strip()
+                if filename:
+                    download_file(client_socket, server_address, filename)
+                    #Read the list of files and download them one by one
+        
+        client_socket.close()
+    except Exception as e:
+        print(f"The program is abnormal: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
 
