@@ -24,5 +24,20 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
     return None
 #Function to send and receive packets with a timeout mechanism
 
-def download_file(socket: socket.socket_address: Tuple[str, int], filename: str) -> bool:
-#The complete process of downloading a single file from the server
+def download_file(socket: socket.socket, server_address: Tuple[str, int], filename: str) -> bool:
+    """下载单个文件的完整流程"""
+    print(f"开始下载文件: {filename}")
+    
+    download_msg = f"DOWNLOAD {filename}"
+    response = send_and_receive(socket, server_address, download_msg.encode(), "DOWNLOAD")
+    if not response:
+        return False
+    
+    parts = response.split()
+    if parts[0] == "ERR":
+        print(f"错误: 文件不存在 - {filename}")
+        return False
+    if parts[0] != "OK" or parts[1] != filename:
+        print(f"无效响应: {response}")
+        return False
+    #Send a DOWNLOAD request
