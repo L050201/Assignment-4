@@ -10,4 +10,13 @@ INITIAL_TIMEOUT = 1.0
 
 def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: bytes, operation: str) -> Optional[str]:
     #Send packets and receive responses, and implement a timeout retransmission mechanism
-    
+    timeout = INITIAL_TIMEOUT
+    for retries in range(MAX_RETRIES):
+        try:
+            socket.sendto(data, address)
+            socket.settimeout(timeout)
+            response, _ = socket.recvfrom(4096)
+            return response.decode().strip()
+        except socket.timeout:
+            timeout *= 2 #Double the timeout for the next retry
+            print(f"Timeout: {operation} request timed out, retrying...")
