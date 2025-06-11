@@ -20,3 +20,6 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
         except socket.timeout:
             timeout *= 2 #Double the timeout for the next retry
             print(f"Timeout: {operation} request timed out, retrying...")
+    print(f"{operation}Failed: The maximum number of retries") 
+    return None
+#Function to send and receive packets with a timeout mechanism
