@@ -97,3 +97,14 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
         return True
         #Send a FILE CLOSE request to the data port and check the response
 
+def main():
+    """Main function: parses command-line arguments and initiates the download process"""
+    if len(sys.argv) != 4:
+        print("usage: python3 udp_client.py <host name> <Server port> <File list path>")
+        sys.exit(1)
+    
+    hostname, server_port, file_list_path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+    server_address = (hostname, server_port)
+    #Parse command-line arguments
+
+
