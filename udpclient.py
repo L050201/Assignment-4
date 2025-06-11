@@ -64,3 +64,9 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
                 OS.remove(filename) #Delete the partially downloaded file
                 return False
             #Send a FILE GET request to the data port
+
+            parts = response.split()
+            if parts[0] != "FILE" or parts[1] != filename or parts[2] != "OK":
+                print(f"Invalid data response: {response}")
+                continue
+            #SEND A FILE GET REQUEST TO THE DATA PORT
