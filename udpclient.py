@@ -47,3 +47,13 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
     data_address = (server_address[0], data_port)
     print(f"文件大小: {file_size} 字节, 数据端口: {data_port}")
     # The parsing response gets the file size and data port
+
+    with open(filename, 'wb') as f:
+        block_size = 1000
+        total_received = 0
+        progress = 0
+        
+        while total_received < file_size:
+            start = total_received
+            end = min(total_received + block_size - 1, file_size - 1)
+            #Create a file for writing
