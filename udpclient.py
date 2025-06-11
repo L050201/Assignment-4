@@ -70,3 +70,20 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
                 print(f"Invalid data response: {response}")
                 continue
             #SEND A FILE GET REQUEST TO THE DATA PORT
+
+            try:
+                data_index = parts.index("DATA") + 1
+                base64_data = ' '.join(parts[data_index:])
+                file_data = base64.b64decode(base64_data)
+                f.write(file_data)
+                total_received += len(file_data)
+
+                new_progress = int((total_received / file_size) * 20)
+                while progress < new_progress:
+                    print("*", end='', flush=True)
+                    progress += 1
+            except (ValueError, base64.binascii.Error) as e:
+                print(f"Data decoding failed: {e}")
+        
+        print(f"\nThe file download is complete: {filename}")
+        #Extract and decode Base64 data and write to file
