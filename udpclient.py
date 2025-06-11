@@ -87,3 +87,13 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
         
         print(f"\nThe file download is complete: {filename}")
         #Extract and decode Base64 data and write to file
+
+        close_msg = f"FILE {filename} CLOSE"
+        response = send_and_receive(socket, data_address, close_msg.encode(), "CLOSE")
+        if not response or not response.startswith(f"FILE {filename} CLOSE_OK"):
+            print("Warning: No CLOSE_OK response was received and the connection may not be closed gracefully")
+        else:
+            print("The connection has been closed gracefully")
+        return True
+        #Send a FILE CLOSE request to the data port and check the response
+
