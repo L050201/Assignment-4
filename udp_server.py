@@ -86,4 +86,19 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                             else:
                                 print(f"Failed to read the data block: Expectation {block_size}B, Actual {len(file_data)}B (location: {start})")
                         except (IndexError, ValueError) as e:
-                            print(f"Request parsing failed: {e}, request: {request_str}")                      
+                            print(f"Request parsing failed: {e}, request: {request_str}") 
+
+                except socket.timeout:
+                    continue
+                except Exception as e:
+                    print(f"Data transmission anomaly: {e}")
+                    break
+        
+    except Exception as e:
+        print(f"Data thread exception: {e}")
+    finally:
+        try:
+            data_socket.close()
+        except:
+            pass
+        # Close the data socket and release the port.
