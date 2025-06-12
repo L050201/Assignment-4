@@ -24,5 +24,19 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
         print(f"文件不存在: {filename} (请求来自: {client_address})")
         return
     #Check if the file exists
+
+    data_port = random.randint(*DATA_PORT_RANGE)
+    file_size = os.path.getsize(file_path)
+    ok_msg = f"OK {filename} SIZE {file_size} PORT {data_port}"
+    welcome_socket.sendto(ok_msg.encode(), client_address)
     
-     
+    print(f"准备发送文件: {filename} (大小: {file_size}B, 数据端口: {data_port}, 客户端: {client_address})")
+    data_thread = threading.Thread(
+        target=handle_data_transmission,
+        args=(filename, client_address, data_port)
+    )
+    data_thread.daemon = True
+    data_thread.start()
+    #Assign random data ports and start data transmission threads.
+
+    
