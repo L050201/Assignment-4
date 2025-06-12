@@ -130,5 +130,17 @@ def main():
             except socket.timeout:
                 continue
             except Exception as e:
-                print(f"服务器异常: {e}") 
-                # Main loop: Receive client requests and allocate threads for processing.     
+                print(f"Server exception: {e}") 
+                # Main loop: Receive client requests and allocate threads for processing. 
+                 
+    except Exception as e:
+        print(f"Program exception: {e}")
+    finally:
+        try:
+            welcome_socket.close()
+        except:
+            pass
+
+if __name__ == "__main__":
+    main() 
+          

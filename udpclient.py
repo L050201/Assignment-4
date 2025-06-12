@@ -61,7 +61,7 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
             get_msg = f"FILE {filename} GET START {start} END {end}"
             response = send_and_receive(socket, data_address, get_msg.encode(), "FILE GET")
             if not response:
-                OS.remove(filename) #Delete the partially downloaded file
+                OS.remove(filename) # type: ignore #Delete the partially downloaded file
                 return False
             #Send a FILE GET request to the data port
 
