@@ -46,3 +46,24 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
         data_socket.bind(('0.0.0.0', data_port))
         print(f"Data thread started: Port {data_port}, Document {filename}") 
         # Create a UDP socket for the data port   
+
+        with open(filename, 'rb') as f:
+            buffer_size = 4096
+            while True:
+                try:
+                    request, _ = data_socket.recvfrom(buffer_size)
+                    request_str = request.decode().strip()
+                    print(f"收到数据请求: {request_str} from {client_address}")
+                    
+                    parts = request_str.split()
+                    if not parts or parts[0] != "FILE" or parts[1] != filename:
+                        print(f"无效数据请求: {request_str}")
+                        continue
+                    # Receive client request 
+
+                    if parts[2] == "CLOSE":
+                        close_msg = f"FILE {filename} CLOSE_OK"
+                        data_socket.sendto(close_msg.encode(), client_address)
+                        print(f"文件传输完成: {filename} (客户端: {client_address})")
+                        break
+                    # Handle closure requests
