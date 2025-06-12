@@ -75,5 +75,15 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                             block_size = end - start + 1
                          # Process data block requests
 
-                         
+                            f.seek(start)
+                            file_data = f.read(block_size)
                             
+                            if len(file_data) == block_size:
+                               # Encode the data in Base64 and construct the response.
+                                base64_data = base64.b64encode(file_data).decode()
+                                response = f"FILE {filename} OK START {start} END {end} DATA {base64_data}"
+                                data_socket.sendto(response.encode(), client_address)
+                            else:
+                                print(f"Failed to read the data block: Expectation {block_size}B, Actual {len(file_data)}B (location: {start})")
+                        except (IndexError, ValueError) as e:
+                            print(f"Request parsing failed: {e}, request: {request_str}")                      
