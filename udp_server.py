@@ -114,4 +114,21 @@ def main():
         welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         welcome_socket.bind(('0.0.0.0', server_port))
         welcome_socket.settimeout(1.0)  # Set a timeout for receiving requests
-        print(f"Server started: Listening on port {server_port}")        
+        print(f"Server started: Listening on port {server_port}") 
+
+        while True:
+            try:
+                data, client_address = welcome_socket.recvfrom(1024)
+                request = data.decode().strip()
+                #Create a new thread for each client request.
+                client_thread = threading.Thread(
+                    target=handle_client_request,
+                    args=(welcome_socket, request, client_address)
+                )
+                client_thread.daemon = True
+                client_thread.start()
+            except socket.timeout:
+                continue
+            except Exception as e:
+                print(f"服务器异常: {e}") 
+                # Main loop: Receive client requests and allocate threads for processing.     
