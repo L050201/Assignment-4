@@ -67,3 +67,13 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                         print(f"文件传输完成: {filename} (客户端: {client_address})")
                         break
                     # Handle closure requests
+
+                    elif parts[2] == "GET":
+                        try:
+                            start = int(parts[4])
+                            end = int(parts[6])
+                            block_size = end - start + 1
+                         # Process data block requests
+
+                         
+                            
