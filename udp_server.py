@@ -30,7 +30,7 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
     ok_msg = f"OK {filename} SIZE {file_size} PORT {data_port}"
     welcome_socket.sendto(ok_msg.encode(), client_address)
     
-    print(f"准备发送文件: {filename} (大小: {file_size}B, 数据端口: {data_port}, 客户端: {client_address})")
+    print(f"Ready to send the document: {filename} (Size:{file_size}B,Data port : {data_port}, Client: {client_address})")
     data_thread = threading.Thread(
         target=handle_data_transmission,
         args=(filename, client_address, data_port)
@@ -39,4 +39,10 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
     data_thread.start()
     #Assign random data ports and start data transmission threads.
 
-    
+def handle_data_transmission(filename: str, client_address: Tuple[str, int], data_port: int):
+    """Thread function for handling file data transmission"""
+    try:
+        data_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        data_socket.bind(('0.0.0.0', data_port))
+        print(f"Data thread started: Port {data_port}, Document {filename}") 
+        # Create a UDP socket for the data port   
