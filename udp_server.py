@@ -102,3 +102,16 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
         except:
             pass
         # Close the data socket and release the port.
+def main():
+    """Main function: Start the server and listen for client requests"""
+    if len(sys.argv) != 2:
+        print("Usage: python3 udp_server.py <Listening port>")
+        sys.exit(1)
+    
+    server_port = int(sys.argv[1])
+    try:
+        #Create a welcome socket and start listening.
+        welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        welcome_socket.bind(('0.0.0.0', server_port))
+        welcome_socket.settimeout(1.0)  # Set a timeout for receiving requests
+        print(f"Server started: Listening on port {server_port}")        
