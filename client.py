@@ -37,17 +37,17 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
     
     parts = response.split()
     if parts[0] == "ERR":
-        print(f"错误: 文件不存在 - {filename}")
+        print(f"Error: The file does not exist- {filename}")
         return False
     if parts[0] != "OK" or parts[1] != filename:
-        print(f"无效响应: {response}")
+        print(f"Invalid response: {response}")
         return False
     #Send a DOWNLOAD request
 
     file_size = int(parts[3])
     data_port = int(parts[5])
     data_address = (server_address[0], data_port)
-    print(f"文件大小: {file_size} 字节, 数据端口: {data_port}")
+    print(f"File size: {file_size} bytes, data ports: {data_port}")
     # The parsing response gets the file size and data port
 
     with open(filename, 'wb') as f:
@@ -79,53 +79,41 @@ def download_file(socket: socket.socket, server_address: Tuple[str, int], filena
                 file_data = base64.b64decode(base64_data)
                 f.write(file_data)
                 total_received += len(file_data)
-
                 new_progress = int((total_received / file_size) * 20)
                 while progress < new_progress:
                     print("*", end='', flush=True)
                     progress += 1
             except (ValueError, base64.binascii.Error) as e:
-                print(f"Data decoding failed: {e}")
-        
-        print(f"\nThe file download is complete: {filename}")
-        #Extract and decode Base64 data and write to file
-
-        close_msg = f"FILE {filename} CLOSE"
-        response = send_and_receive(socket, data_address, close_msg.encode(), "CLOSE")
-        if not response or not response.startswith(f"FILE {filename} CLOSE_OK"):
-            print("Warning: No CLOSE_OK response was received and the connection may not be closed gracefully")
-        else:
-            print("The connection has been closed gracefully")
-        return True
-        #Send a FILE CLOSE request to the data port and check the response
+                logging.error(f"Data decoding failed: {e}")
+    logging.info(f"\nThe file download is complete: {filename}")
+    close_msg = f"FILE {filename} CLOSE"
+    response = send_and_receive(socket, data_address, close_msg.encode(), "CLOSE")
+    if not response or not response.startswith(f"FILE {filename} CLOSE_OK"):
+        logging.warning("Warning: No CLOSE_OK response was received and the connection may not be closed gracefully")
+    else:
+        logging.info("The connection has been closed gracefully")
+    return True
 
 def main():
-    """Main function: parses command-line arguments and initiates the download process"""
     if len(sys.argv) != 4:
-        print("usage: python3 udp_client.py <host name> <Server port> <File list path>")
+        logging.error("usage: python3 udp_client.py <host name> <Server port> <File list path>")
         sys.exit(1)
-    
     hostname, server_port, file_list_path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
     server_address = (hostname, server_port)
-    #Parse command-line arguments
-
     try:
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # Create a UDP socket (the client does not need to bind a port)
-        
         with open(file_list_path, 'r') as f:
             for line in f:
                 filename = line.strip()
                 if filename:
                     download_file(client_socket, server_address, filename)
-                    #Read the list of files and download them one by one
-        
         client_socket.close()
     except Exception as e:
-        print(f"The program is abnormal: {e}")
+        logging.error(f"The program is abnormal: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
     main()
+#This is the main function of the program, which is executed when the program is run as a script.
 
 
