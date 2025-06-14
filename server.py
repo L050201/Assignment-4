@@ -9,15 +9,15 @@ from typing import Tuple, Optional
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-DATA_PORT_RANGE = (50000, 51000)# range of ports to use for data transfer
+DATA_PORT_RANGE = (50000, 51000)  # range of ports to use for data transfer
 
 def handle_client_request(welcome_socket: socket.socket, request: str, client_address: Tuple[str, int]):
-    #Handle the client's download request and create a new thread to manage data transfer.
+    # Handle the client's download request and create a new thread to manage data transfer.
     parts = request.split()
     if not (parts and parts[0] == "DOWNLOAD" and len(parts) >= 2):
         logging.error(f"Invalid request: {request} from {client_address}")
         return
-    
+
     filename = parts[1]
     file_path = os.path.abspath(filename)
     if not os.path.exists(file_path) or os.path.isdir(file_path):
@@ -25,7 +25,7 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
         welcome_socket.sendto(error_msg.encode(), client_address)
         logging.error(f"The file does not exist.: {filename} (Request from: {client_address})")
         return
-     #Check if the file exists
+    # Check if the file exists
 
     data_port = random.randint(*DATA_PORT_RANGE)
     file_size = os.path.getsize(file_path)
@@ -39,7 +39,7 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
     )
     data_thread.daemon = True
     data_thread.start()
-     #Assign random data ports and start data transmission threads.
+    # Assign random data ports and start data transmission threads.
 
 def handle_data_transmission(filename: str, client_address: Tuple[str, int], data_port: int):
     try:
@@ -57,7 +57,7 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                     if not parts or parts[0] != "FILE" or parts[1] != filename:
                         logging.error(f"Invalid data request: {request_str}")
                         continue
-                    # Receive client request 
+                    # Receive client request
 
                     if parts[2] == "CLOSE":
                         close_msg = f"FILE {filename} CLOSE_OK"
@@ -71,7 +71,7 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                             start = int(parts[4])
                             end = int(parts[6])
                             block_size = end - start + 1
-                             # Process data block requests
+                            # Process data block requests
 
                             f.seek(start)
                             file_data = f.read(block_size)
@@ -96,23 +96,24 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
             data_socket.close()
         except:
             pass
-             # Close the data socket and release the port.
+    # Close the data socket and release the port.
+
 def main():
     if len(sys.argv) != 2:
-        logging.error("Usage: python3 udp_server.py <Listening port>")
+        logging.error("Usage: python server.py <Listening port>")
         sys.exit(1)
     server_port = int(sys.argv[1])
     try:
-        #Create a welcome socket and start listening.
+        # Create a welcome socket and start listening.
         welcome_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         welcome_socket.bind(('0.0.0.0', server_port))
-        welcome_socket.settimeout(1.0)# Set a timeout for receiving requests
+        welcome_socket.settimeout(1.0)  # Set a timeout for receiving requests
         logging.info(f"Server started: Listening on port {server_port}")
         while True:
             try:
                 data, client_address = welcome_socket.recvfrom(1024)
                 request = data.decode().strip()
-                #Create a new thread for each client request.
+                # Create a new thread for each client request.
                 client_thread = threading.Thread(
                     target=handle_client_request,
                     args=(welcome_socket, request, client_address)
@@ -123,7 +124,7 @@ def main():
                 continue
             except Exception as e:
                 logging.error(f"Server exception: {e}")
-                # Main loop: Receive client requests and allocate threads for processing. 
+        # Main loop: Receive client requests and allocate threads for processing.
 
     except Exception as e:
         logging.error(f"Program exception: {e}")
@@ -135,4 +136,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # When the script is run as the main program, call the main() function                  
+    # When the script is run as the main program, call the main() function
