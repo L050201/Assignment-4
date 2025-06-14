@@ -12,7 +12,7 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
     #Handle the client's download request and create a new thread to manage data transfer.
     parts = request.split()
     if not (parts and parts[0] == "DOWNLOAD" and len(parts) >= 2):
-        print(f"无效请求: {request} from {client_address}")
+        print(f"Invalid request: {request} from {client_address}")
         return
     
     filename = parts[1]
@@ -21,7 +21,7 @@ def handle_client_request(welcome_socket: socket.socket, request: str, client_ad
     if not os.path.exists(file_path) or os.path.isdir(file_path):
         error_msg = f"ERR {filename} NOT_FOUND"
         welcome_socket.sendto(error_msg.encode(), client_address)
-        print(f"文件不存在: {filename} (请求来自: {client_address})")
+        print(f"The file does not exist.: {filename} (Request from: {client_address})")
         return
     #Check if the file exists
 
@@ -53,18 +53,18 @@ def handle_data_transmission(filename: str, client_address: Tuple[str, int], dat
                 try:
                     request, _ = data_socket.recvfrom(buffer_size)
                     request_str = request.decode().strip()
-                    print(f"收到数据请求: {request_str} from {client_address}")
+                    print(f"Received data request: {request_str} from {client_address}")
                     
                     parts = request_str.split()
                     if not parts or parts[0] != "FILE" or parts[1] != filename:
-                        print(f"无效数据请求: {request_str}")
+                        print(f"Invalid data request: {request_str}")
                         continue
                     # Receive client request 
 
                     if parts[2] == "CLOSE":
                         close_msg = f"FILE {filename} CLOSE_OK"
                         data_socket.sendto(close_msg.encode(), client_address)
-                        print(f"文件传输完成: {filename} (客户端: {client_address})")
+                        print(f"File transfer completed: {filename} (Client: {client_address})")
                         break
                     # Handle closure requests
 
