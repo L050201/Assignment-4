@@ -29,8 +29,7 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
 
 def download_file(socket: socket.socket, server_address: Tuple[str, int], filename: str) -> bool:
     #The complete process of downloading a single file from the server
-    print(f"开始下载文件: {filename}")
-    
+    logging.info(f"Start downloading the file: {filename}")
     download_msg = f"DOWNLOAD {filename}"
     response = send_and_receive(socket, server_address, download_msg.encode(), "DOWNLOAD")
     if not response:
