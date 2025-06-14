@@ -143,4 +143,4 @@ def main():
 
 if __name__ == "__main__":
     main() 
-          
+ # When the script is run as the main program, call the main() function                  
