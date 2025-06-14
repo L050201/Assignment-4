@@ -2,8 +2,11 @@ import socket
 import sys
 import base64
 import os
+import logging
 from typing import Optional, Tuple
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+#Configured the standard logging system of Python, logging, mainly to set the output level and format of the logs.
 MAX_RETRIES =5
 INITIAL_TIMEOUT = 1.0
 #Initial Timeout (Seconds)
@@ -19,8 +22,8 @@ def send_and_receive(socket: socket.socket, address: Tuple[str, int], data: byte
             return response.decode().strip()
         except socket.timeout:
             timeout *= 2 #Double the timeout for the next retry
-            print(f"Timeout: {operation} request timed out, retrying...")
-    print(f"{operation}Failed: The maximum number of retries") 
+            logging.warning(f"Timeout: {operation} request timed out, retrying...")
+    logging.error(f"{operation}Failed: The maximum number of retries")#These two lines of code are in the send_and_receive function and are used to handle cases where UDP requests time out
     return None
 #Function to send and receive packets with a timeout mechanism
 
